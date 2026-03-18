@@ -4,6 +4,7 @@
 #include "Brick-By-Brick-Tester.h"
 
 AccelStepper upperInConvey1(AccelStepper::DRIVER, UPPER_IN_CONVEY_1_STEP, UPPER_IN_CONVEY_1_DIR);
+AccelStepper identConvey1(AccelStepper::DRIVER, IDENT_CONVEY_1_STEP, IDENT_CONVEY_1_DIR);
 
 //create angular servos
 Servo bins[1];
@@ -21,6 +22,9 @@ void setup() {
   //set max speed of stepper motors
   upperInConvey1.setMaxSpeed(2000);
   upperInConvey1.setAcceleration(1000);
+
+  identConvey1.setMaxSpeed(2000);
+  identConvey1.setAcceleration(1000);
 
   //attach pins to servo
   bins[0].attach(BIN_SIGNAL_0);
@@ -43,10 +47,27 @@ void loop() {
   //   binActive = false;
   // }
 
-  upperInConvey1.setSpeed(2000);
+  // if (Serial.available() >= 3) {
+  //   char buffer[4];
+  //   Serial.readBytes(buffer, 3);
+  //   buffer[3] = '\0';  // Null terminate
+
+  //   Serial.print("Received: ");
+  //   Serial.println(buffer);
+  // }
+
+  upperInConvey1.setSpeed(500);
+  identConvey1.setSpeed(500);
+
+  // setServo(bins[0], 0);
+  // delay(1500);
+  // setServo(bins[0], 180);
+  // delay(1500);
+
 
   // keep steppers running
   upperInConvey1.runSpeed();
+  identConvey1.runSpeed();
 } //end loop
 
 

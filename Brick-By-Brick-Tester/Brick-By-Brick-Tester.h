@@ -8,6 +8,9 @@
 #define UPPER_IN_CONVEY_1_STEP          22
 #define UPPER_IN_CONVEY_1_DIR           23
 
+#define IDENT_CONVEY_1_STEP             26
+#define IDENT_CONVEY_1_DIR              27
+
 //////////////////////////////////////////////
 // DEFINE SERVO PINS (PWM)
 //////////////////////////////////////////////

@@ -3,12 +3,18 @@
 #include <Servo.h>
 #include "Brick-By-Brick-Arduino.h"
 
+//MOTOR DECLARATIONS
 AccelStepper upperInConvey1(AccelStepper::DRIVER, UPPER_IN_CONVEY_1_STEP, UPPER_IN_CONVEY_1_DIR);
 AccelStepper upperInConvey2(AccelStepper::DRIVER, UPPER_IN_CONVEY_2_STEP, UPPER_IN_CONVEY_2_DIR);
 AccelStepper identConvey1(AccelStepper::DRIVER, IDENT_CONVEY_1_STEP, IDENT_CONVEY_1_DIR);
 AccelStepper identConvey2(AccelStepper::DRIVER, IDENT_CONVEY_2_STEP, IDENT_CONVEY_2_DIR);
 AccelStepper identifyMotor1(AccelStepper::DRIVER, IDENTIFY_MOTOR_1_STEP, IDENTIFY_MOTOR_1_DIR);
 AccelStepper outputMotor1(AccelStepper::DRIVER, OUTPUT_MOTOR_1_STEP, OUTPUT_MOTOR_1_DIR);
+
+//FLAG DECLARATIONS
+bool vChannel1Active = false;
+bool vChannel2Active = false;
+bool rampActive = false;
 
 //create angular servos
 Servo bins[14];
@@ -66,77 +72,144 @@ void setup() {
 }
 
 void loop() {
-  checkSerial();   // handle incoming bin commands
+  static char cmd[16];
+  if(readCommand(cmd)){
+    processCommand(cmd);
+  }
 
-  // handle timing for active bin
-  if (binActive && millis() - binStartTime >= 250) {
+  // bin timing logic
+  if(binActive && millis() - binStartTime >= 250){
     setServo(bins[currentBin], BIN_CLOSED);
     runServo(inputShakeCR, 0);
     setAllMotorSpeeds(0);
     binActive = false;
   }
 
-  // keep steppers running
+  if(vChannel2Active){
+    upperInConvey1.setSpeed(2000);
+    upperInConvey2.setSpeed(2000);
+    } else{
+      upperInConvey1.setSpeed(0);
+      upperInConvey2.setSpeed(0);
+    }
+
+  if(vChannel1Active){
+    identConvey1.setSpeed(2000);
+    identConvey2.setSpeed(2000);
+  } else{
+    identConvey1.setSpeed(0);
+    identConvey2.setSpeed(0);
+  }
+
+  if(rampActive){
+    identifyMotor1.setSpeed(2000);
+  } else{
+    identifyMotor1.setSpeed(0);
+  }
+
+  // run motors
   upperInConvey1.runSpeed();
   upperInConvey2.runSpeed();
   identConvey1.runSpeed();
   identConvey2.runSpeed();
   identifyMotor1.runSpeed();
   outputMotor1.runSpeed();
-} //end loop
+}
 
 
 ///////////////////////////////////////////////////////////////
-// BIN HANDLING CODE //
+// COMMAND HANDLING CODE //
 ///////////////////////////////////////////////////////////////
 
-  void handleBin(int binNumber) {
-    currentBin = binNumber;
+bool readCommand(char *cmd) {
+  static uint8_t index = 0;
 
-    setServo(bins[binNumber], BIN_OPEN);
-    runServo(inputShakeCR, 100);
-    setAllMotorSpeeds(2000);
+  while (Serial.available()) {
+    char c = Serial.read();
 
-    binStartTime = millis();
-    binActive = true;
-  }
-  
+    if (c == '\n') {
+      cmd[index] = '\0';
+      index = 0;
+      return true;
+    }
 
-  void checkSerial() {
-    static char buffer[4];
-    static uint8_t index = 0;
-
-    while (Serial.available() > 0) {
-      char c = Serial.read();
-
-      if (c == '\n') {
-
-        buffer[index] = '\0';
-
-        if (buffer[0] == 'B' &&
-            isDigit(buffer[1]) &&
-            isDigit(buffer[2])) {
-
-          int bin = (buffer[1] - '0') * 10 +
-                    (buffer[2] - '0');
-
-          if (bin >= 0 && bin <= 13) {
-            if (!binActive) {
-              handleBin(bin);
-            }
-          }
-        }
-
-        index = 0;
-      }
-      else {
-        if (index < 3) {
-          buffer[index++] = c;
-        }
-      }
+    if (index < 15) {
+      cmd[index++] = c;
+    } else {
+      index = 0; // overflow protection
     }
   }
+  return false;
+}
 
+void processCommand(char *cmd) {
+
+  switch (cmd[0]) {
+
+    case 'B':
+      handleBinCommand(cmd);
+      break;
+
+    case 'V':
+      handleVChannel(cmd);
+      break;
+
+    case 'R':
+      handleRamp(cmd);
+      break;
+
+    default:
+      Serial.println("ERR:UNKNOWN_CMD");
+      break;
+  }
+}
+
+void handleBinCommand(char *cmd) {
+  int bin = atoi(cmd + 1);
+
+  if (bin >= 0 && bin <= 13) {
+    if (!binActive) {
+      handleBin(bin);
+    }
+  }
+}
+
+void handleBin(int binNumber){
+  currentBin = binNumber;
+
+  setServo(bins[binNumber], BIN_OPEN);
+  runServo(inputShakeCR, 100);
+  setAllMotorSpeeds(2000);
+
+  binStartTime = millis();
+  binActive = true;
+}
+
+void handleVChannel(char *cmd){
+  int channel = cmd[1] - '0';
+  int state   = cmd[3] - '0';
+
+  bool on = (state == '1' || state == 1);
+
+  switch (channel){
+    case 1:
+      vChannel1Active = on;
+    break;
+
+    case 2:
+      vChannel2Active = on;
+    break;
+  }
+}
+
+void handleRamp(char *cmd){
+  int state = cmd[3] - '0';
+
+  bool on = (state == '1' || state == 1);
+
+  rampActive = on;
+
+}
 
 ///////////////////////////////////////////////////////////////
 // MOVEMENT CODE //
