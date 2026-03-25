@@ -4,23 +4,23 @@
 #include "Brick-By-Brick-Arduino.h"
 
 //MOTOR DECLARATIONS
-AccelStepper upperInConvey1(AccelStepper::DRIVER, UPPER_IN_CONVEY_1_STEP, UPPER_IN_CONVEY_1_DIR);
-AccelStepper upperInConvey2(AccelStepper::DRIVER, UPPER_IN_CONVEY_2_STEP, UPPER_IN_CONVEY_2_DIR);
-AccelStepper identConvey1(AccelStepper::DRIVER, IDENT_CONVEY_1_STEP, IDENT_CONVEY_1_DIR);
-AccelStepper identConvey2(AccelStepper::DRIVER, IDENT_CONVEY_2_STEP, IDENT_CONVEY_2_DIR);
-AccelStepper identifyMotor1(AccelStepper::DRIVER, IDENTIFY_MOTOR_1_STEP, IDENTIFY_MOTOR_1_DIR);
-AccelStepper outputMotor1(AccelStepper::DRIVER, OUTPUT_MOTOR_1_STEP, OUTPUT_MOTOR_1_DIR);
+AccelStepper inputConvey(AccelStepper::DRIVER, INPUT_CONVEY_STEP, INPUT_CONVEY_DIR);
+AccelStepper identConvey(AccelStepper::DRIVER, IDENT_CONVEY_STEP, IDENT_CONVEY_DIR);
+
+AccelStepper liftMotor(AccelStepper::DRIVER, LIFT_MOTOR_STEP, LIFT_MOTOR_DIR);
+AccelStepper carouselMotor(AccelStepper::DRIVER, CAROUSEL_MOTOR_STEP, CAROUSEL_MOTOR_DIR);
 
 //FLAG DECLARATIONS
 bool vChannel1Active = false;
 bool vChannel2Active = false;
-bool rampActive = false;
+bool vChannel3Active = false;
+
+bool inputConveyActive = false;
+bool identConveyActive = false;
+bool liftActive = false;
 
 //create angular servos
 Servo bins[14];
-
-//create CR servos
-Servo inputShakeCR;
 
 bool binActive = false;
 unsigned long binStartTime = 0;
@@ -30,23 +30,37 @@ int currentBin = -1;
 void setup() {
 
   //set max speed of stepper motors
-  upperInConvey1.setMaxSpeed(2000);
-  upperInConvey1.setAcceleration(1000);
+  inputConvey.setMaxSpeed(2000);
+  inputConvey.setAcceleration(1000);
 
-  upperInConvey2.setMaxSpeed(2000);
-  upperInConvey2.setAcceleration(1000);
+  identConvey.setMaxSpeed(2000);
+  identConvey.setAcceleration(1000);
 
-  identConvey1.setMaxSpeed(2000);
-  identConvey1.setAcceleration(1000);
+  liftMotor.setMaxSpeed(1500);
+  liftMotor.setAcceleration(800);
+  liftMotor.setSpeed(0);
+  liftActive = false;
 
-  identConvey2.setMaxSpeed(2000);
-  identConvey2.setAcceleration(1000);
+  carouselMotor.setMaxSpeed(2000);
+  carouselMotor.setAcceleration(1000);
 
-  identifyMotor1.setMaxSpeed(1500);
-  identifyMotor1.setAcceleration(800);
+  pinMode(V1_IN1, OUTPUT);
+  pinMode(V1_IN2, OUTPUT);
+  pinMode(V1_ENA, OUTPUT);
 
-  outputMotor1.setMaxSpeed(2000);
-  outputMotor1.setAcceleration(1000);
+  pinMode(V2_IN1, OUTPUT);
+  pinMode(V2_IN2, OUTPUT);
+  pinMode(V2_ENA, OUTPUT);
+
+  pinMode(V3_IN1, OUTPUT);
+  pinMode(V3_IN2, OUTPUT);
+  pinMode(V3_ENA, OUTPUT);
+
+  pinMode(LIFT_LIMIT_SWITCH, INPUT_PULLUP);
+
+  setVChannel(1, 0);
+  setVChannel(2, 0);
+  setVChannel(3, 0);
 
   //attach pins to servo
   bins[0].attach(BIN_SIGNAL_0);
@@ -64,9 +78,6 @@ void setup() {
   bins[12].attach(BIN_SIGNAL_12);
   bins[13].attach(BIN_SIGNAL_13);
 
-  //attach pins to CR servo
-  inputShakeCR.attach(INPUT_SHAKE_SIGNAL);
-
   //turn on serial communication for arduino mega
   Serial.begin(115200);
 }
@@ -80,40 +91,58 @@ void loop() {
   // bin timing logic
   if(binActive && millis() - binStartTime >= 250){
     setServo(bins[currentBin], BIN_CLOSED);
-    runServo(inputShakeCR, 0);
     setAllMotorSpeeds(0);
     binActive = false;
   }
 
-  if(vChannel2Active){
-    upperInConvey1.setSpeed(2000);
-    upperInConvey2.setSpeed(2000);
-    } else{
-      upperInConvey1.setSpeed(0);
-      upperInConvey2.setSpeed(0);
-    }
-
   if(vChannel1Active){
-    identConvey1.setSpeed(2000);
-    identConvey2.setSpeed(2000);
+    setVChannel(1, 100);
   } else{
-    identConvey1.setSpeed(0);
-    identConvey2.setSpeed(0);
+    setVChannel(1, 0);
   }
 
-  if(rampActive){
-    identifyMotor1.setSpeed(2000);
+  if(vChannel2Active){
+    setVChannel(2, 100);
   } else{
-    identifyMotor1.setSpeed(0);
+    setVChannel(2, 0);
   }
 
-  // run motors
-  upperInConvey1.runSpeed();
-  upperInConvey2.runSpeed();
-  identConvey1.runSpeed();
-  identConvey2.runSpeed();
-  identifyMotor1.runSpeed();
-  outputMotor1.runSpeed();
+  if(vChannel3Active){
+    setVChannel(3, 100);
+  } else{
+    setVChannel(3, 0);
+  }
+
+  if(liftActive){
+    if(digitalRead(LIFT_LIMIT_SWITCH) == LOW){ // triggered
+      liftMotor.setSpeed(0);
+      liftActive = false;
+    } else {
+      liftMotor.setSpeed(1000);
+    }
+  }
+
+  // Input conveyor
+  if(inputConveyActive){
+    inputConvey.setSpeed(2000);
+  } else {
+    inputConvey.setSpeed(0);
+  }
+
+  // Identifier conveyor
+  if(identConveyActive){
+    identConvey.setSpeed(2000);
+  } else {
+    identConvey.setSpeed(0);
+  }
+
+  // run stepper motors
+  inputConvey.runSpeed();
+  identConvey.runSpeed();
+  carouselMotor.run();
+  if(liftActive){
+    liftMotor.runSpeed();
+  } 
 }
 
 
@@ -144,72 +173,94 @@ bool readCommand(char *cmd) {
 
 void processCommand(char *cmd) {
 
-  switch (cmd[0]) {
-
-    case 'B':
-      handleBinCommand(cmd);
-      break;
-
-    case 'V':
-      handleVChannel(cmd);
-      break;
-
-    case 'R':
-      handleRamp(cmd);
-      break;
-
-    default:
-      Serial.println("ERR:UNKNOWN_CMD");
-      break;
+  if (strncmp(cmd, "IN", 2) == 0) {
+    handleInputConvey(cmd);
+  }
+  else if (strncmp(cmd, "ID", 2) == 0) {
+    handleIdentConvey(cmd);
+  }
+  else if (strncmp(cmd, "LI", 2) == 0) {
+    handleLift(cmd);
+  }
+  else if (cmd[0] == 'B') {
+    handleCarousel(cmd);
+  }
+  else if (strlen(cmd) >= 2 && cmd[1] == 'T'){
+    handleTrapdoor(cmd);
+  }
+  else if (cmd[0] == 'V') {
+    handleVChannel(cmd);
+  }
+  else {
+    Serial.println("ERR:UNKNOWN_CMD");
   }
 }
 
-void handleBinCommand(char *cmd) {
+void handleInputConvey(char *cmd){
+  if(strlen(cmd) >= 3){
+    inputConveyActive = (cmd[2] == '1');
+  }
+}
+
+void handleIdentConvey(char *cmd){
+  if(strlen(cmd) >= 3){
+    identConveyActive = (cmd[2] == '1');
+  }
+}
+
+void handleLift(char *cmd){
+  if(strlen(cmd) >= 3 && cmd[2] == '1'){
+    liftActive = true;
+    liftMotor.setSpeed(1000);
+  }
+}
+
+void handleCarousel(char *cmd){
   int bin = atoi(cmd + 1);
 
-  if (bin >= 0 && bin <= 13) {
-    if (!binActive) {
-      handleBin(bin);
+  if(bin >= 0 && bin <= 13){
+
+    int angle = map(bin, 0, 13, 0, 180);
+
+    long steps = map(angle, 0, 180, 0, 2000); 
+    // adjust 2000 based on your system
+
+    carouselMotor.moveTo(steps);
+  }
+}
+
+void handleTrapdoor(char *cmd){
+
+  if(strlen(cmd) < 4) return;
+
+  int state = cmd[0] - '0';   // 1 or 0
+  int bin   = atoi(cmd + 2);  // 00–13
+
+  if(bin >= 0 && bin <= 13){
+    if(state == 1){
+      setServo(bins[bin], 90);
+    } else {
+      setServo(bins[bin], 0);
     }
   }
 }
 
-void handleBin(int binNumber){
-  currentBin = binNumber;
-
-  setServo(bins[binNumber], BIN_OPEN);
-  runServo(inputShakeCR, 100);
-  setAllMotorSpeeds(2000);
-
-  binStartTime = millis();
-  binActive = true;
-}
-
 void handleVChannel(char *cmd){
+
+  if(strlen(cmd) < 4) return;
+
   int channel = cmd[1] - '0';
   int state   = cmd[3] - '0';
 
-  bool on = (state == '1' || state == 1);
+  bool on = (state == 1);
 
-  switch (channel){
-    case 1:
-      vChannel1Active = on;
-    break;
-
-    case 2:
-      vChannel2Active = on;
-    break;
+  switch(channel){
+    case 1: vChannel1Active = on; break;
+    case 2: vChannel2Active = on; break;
+    case 3: vChannel3Active = on; break;
   }
 }
 
-void handleRamp(char *cmd){
-  int state = cmd[3] - '0';
-
-  bool on = (state == '1' || state == 1);
-
-  rampActive = on;
-
-}
 
 ///////////////////////////////////////////////////////////////
 // MOVEMENT CODE //
@@ -217,12 +268,37 @@ void handleRamp(char *cmd){
 
   //set all motors to the same speed
   void setAllMotorSpeeds(int speed){
-    upperInConvey1.setSpeed(speed);
-    upperInConvey2.setSpeed(speed);
-    identConvey1.setSpeed(speed);
-    identConvey2.setSpeed(speed);
-    identifyMotor1.setSpeed(speed);
-    outputMotor1.setSpeed(speed);
+    inputConvey.setSpeed(speed);
+    identConvey.setSpeed(speed);
+  }
+
+  void setVChannel(int channel, int speedPercent) {
+
+    int pwm = map(abs(speedPercent), 0, 100, 0, 255);
+
+    int in1, in2, ena;
+
+    switch(channel){
+      case 1: in1 = V1_IN1; in2 = V1_IN2; ena = V1_ENA; break;
+      case 2: in1 = V2_IN1; in2 = V2_IN2; ena = V2_ENA; break;
+      case 3: in1 = V3_IN1; in2 = V3_IN2; ena = V3_ENA; break;
+      default: return;
+    }
+
+    if(speedPercent > 0){
+      digitalWrite(in1, HIGH);
+      digitalWrite(in2, LOW);
+    }
+    else if(speedPercent < 0){
+      digitalWrite(in1, LOW);
+      digitalWrite(in2, HIGH);
+    }
+    else{
+      digitalWrite(in1, LOW);
+      digitalWrite(in2, LOW);
+    }
+
+    analogWrite(ena, pwm);
   }
 
   //run the motor with an acceleration to a relative position
@@ -235,12 +311,6 @@ void handleRamp(char *cmd){
   void setAbsoluteMotor(AccelStepper& stepper, int acceleration, int absolutePosition){
     stepper.setAcceleration(acceleration);
     stepper.moveTo(absolutePosition);
-  }
-
-  //run a CR servo at a set speed
-  void runServo(Servo& servo, int speedPercent){
-    int speed = map(speedPercent, -100, 100, 0, 180);
-    servo.write(speed);
   }
 
   //set a servo to a desired angle

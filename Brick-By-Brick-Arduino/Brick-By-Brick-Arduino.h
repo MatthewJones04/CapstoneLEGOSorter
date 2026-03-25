@@ -4,27 +4,37 @@
 //////////////////////////////////////////////
 // DEFINE MOTOR PINS (DIGITAL ONLY)
 //////////////////////////////////////////////
-// Upper Infeed Conveyors
-#define UPPER_IN_CONVEY_1_STEP          22
-#define UPPER_IN_CONVEY_1_DIR           23
 
-#define UPPER_IN_CONVEY_2_STEP          24
-#define UPPER_IN_CONVEY_2_DIR           25
+// Input Conveyor
+#define INPUT_CONVEY_STEP        22
+#define INPUT_CONVEY_DIR         23
 
-// Identification Conveyors
-#define IDENT_CONVEY_1_STEP             26
-#define IDENT_CONVEY_1_DIR              27
+// Identification Conveyor
+#define IDENT_CONVEY_STEP        24
+#define IDENT_CONVEY_DIR         25
 
-#define IDENT_CONVEY_2_STEP             28
-#define IDENT_CONVEY_2_DIR              29
+// Lift Motor
+#define LIFT_MOTOR_STEP          26
+#define LIFT_MOTOR_DIR           27
 
-// Identify Motor
-#define IDENTIFY_MOTOR_1_STEP           30
-#define IDENTIFY_MOTOR_1_DIR            31
+// Carousel Motor
+#define CAROUSEL_MOTOR_STEP      28
+#define CAROUSEL_MOTOR_DIR       29
 
-// Output Motor
-#define OUTPUT_MOTOR_1_STEP             32
-#define OUTPUT_MOTOR_1_DIR              33
+// V Channel 1
+#define V1_IN1                   30
+#define V1_IN2                   31
+#define V1_ENA                   2    // PWM
+
+// V Channel 2
+#define V2_IN1                   32
+#define V2_IN2                   33
+#define V2_ENA                   3    // PWM
+
+// V Channel 3
+#define V3_IN1                   34
+#define V3_IN2                   35
+#define V3_ENA                   4    // PWM
 
 
 //////////////////////////////////////////////
@@ -45,16 +55,17 @@
 #define BIN_SIGNAL_12                   44
 #define BIN_SIGNAL_13                   45
 
+
 //////////////////////////////////////////////
-// DEFINE CONTINUOUS SERVO PIN (PWM)
+// DEFINE SENSORS
 //////////////////////////////////////////////
-#define INPUT_SHAKE_SIGNAL              46
+#define LIFT_LIMIT_SWITCH               40
 
 
 //////////////////////////////////////////////
 // DEFINE DEFINITIONS
 //////////////////////////////////////////////
-#define BIN_OPEN                        1
+#define BIN_OPEN                        90
 #define BIN_CLOSED                      0
 
 #endif
