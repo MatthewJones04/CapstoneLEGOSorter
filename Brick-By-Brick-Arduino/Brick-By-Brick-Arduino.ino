@@ -218,11 +218,10 @@ void handleLift(char *cmd){
 void handleCarousel(char *cmd){
   int bin = atoi(cmd + 1);
 
-  if(bin >= 0 && bin <= 13){
+  if(bin >= 0 && bin <= 23){
+    int angle = map(bin, 0, 23, 0, 360);
 
-    int angle = map(bin, 0, 13, 0, 180);
-
-    long steps = map(angle, 0, 180, 0, 2000); 
+    long steps = map(angle, 0, 360, 0, 1600); 
     // adjust 2000 based on your system
 
     carouselMotor.moveTo(steps);

@@ -6,35 +6,35 @@
 //////////////////////////////////////////////
 
 // Input Conveyor
-#define INPUT_CONVEY_STEP        22
-#define INPUT_CONVEY_DIR         23
+#define INPUT_CONVEY_STEP               22
+#define INPUT_CONVEY_DIR                23
 
 // Identification Conveyor
-#define IDENT_CONVEY_STEP        24
-#define IDENT_CONVEY_DIR         25
+#define IDENT_CONVEY_STEP               28 //24
+#define IDENT_CONVEY_DIR                29 //25
 
 // Lift Motor
-#define LIFT_MOTOR_STEP          26
-#define LIFT_MOTOR_DIR           27
+#define LIFT_MOTOR_STEP                 26
+#define LIFT_MOTOR_DIR                  27
 
 // Carousel Motor
-#define CAROUSEL_MOTOR_STEP      28
-#define CAROUSEL_MOTOR_DIR       29
+#define CAROUSEL_MOTOR_STEP             24 //28
+#define CAROUSEL_MOTOR_DIR              25 //29
 
 // V Channel 1
-#define V1_IN1                   30
-#define V1_IN2                   31
-#define V1_ENA                   2    // PWM
+#define V1_IN1                          30
+#define V1_IN2                          31
+#define V1_ENA                          2    // PWM
 
 // V Channel 2
-#define V2_IN1                   32
-#define V2_IN2                   33
-#define V2_ENA                   3    // PWM
+#define V2_IN1                          32
+#define V2_IN2                          33
+#define V2_ENA                          3    // PWM
 
 // V Channel 3
-#define V3_IN1                   34
-#define V3_IN2                   35
-#define V3_ENA                   4    // PWM
+#define V3_IN1                          34
+#define V3_IN2                          35
+#define V3_ENA                          4    // PWM
 
 
 //////////////////////////////////////////////
