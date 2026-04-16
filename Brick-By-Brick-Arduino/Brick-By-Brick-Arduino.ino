@@ -22,10 +22,12 @@ bool liftActive = false;
 //create angular servos
 Servo bins[14];
 
-bool binActive = false;
+int binStates[14];              // current angle (0 or 90)
+unsigned long binTimers[14];   // when it was activated
+bool binActive[14];            // whether it's moving
+
 unsigned long binStartTime = 0;
 int currentBin = -1;
-
 
 void setup() {
 
@@ -84,15 +86,20 @@ void setup() {
 
 void loop() {
   static char cmd[16];
+  
   if(readCommand(cmd)){
+    Serial.print("CMD: [");
+    Serial.print(cmd);
+    Serial.println("]");
+
     processCommand(cmd);
   }
 
   // bin timing logic
   if(binActive && millis() - binStartTime >= 250){
-    setServo(bins[currentBin], BIN_CLOSED);
+    setServo(currentBin, BIN_CLOSED);
     setAllMotorSpeeds(0);
-    binActive = false;
+    binActive[currentBin] = false;
   }
 
   if(vChannel1Active){
@@ -143,6 +150,16 @@ void loop() {
   if(liftActive){
     liftMotor.runSpeed();
   } 
+
+  for (int i = 0; i < 14; i++) {
+    if (binActive[i]) {
+      if (millis() - binTimers[i] > 500) {  // 500 ms hold time
+        bins[i].write(0);                  // close again (optional)
+        binActive[i] = false;
+      }
+    }
+  }
+
 }
 
 
@@ -152,26 +169,34 @@ void loop() {
 
 bool readCommand(char *cmd) {
   static uint8_t index = 0;
+  bool commandReady = false;
 
-  while (Serial.available()) {
+  while (Serial.available() > 0) {
     char c = Serial.read();
 
-    if (c == '\n') {
-      cmd[index] = '\0';
-      index = 0;
-      return true;
-    }
-
-    if (index < 15) {
-      cmd[index++] = c;
+    if (c == '\n' || c == '\r') {
+      if (index > 0) {
+        cmd[index] = '\0';
+        index = 0;
+        return true;
+        commandReady = true;
+      }
     } else {
-      index = 0; // overflow protection
+      if (index < 15) {
+        cmd[index++] = c;
+      } else {
+        index = 0; // overflow reset
+      }
     }
   }
-  return false;
+
+  return commandReady;
 }
 
 void processCommand(char *cmd) {
+  Serial.print("Processing: [");
+  Serial.print(cmd);
+  Serial.println("]");
 
   if (strncmp(cmd, "IN", 2) == 0) {
     handleInputConvey(cmd);
@@ -185,7 +210,7 @@ void processCommand(char *cmd) {
   else if (cmd[0] == 'B') {
     handleCarousel(cmd);
   }
-  else if (strlen(cmd) >= 2 && cmd[1] == 'T'){
+  else if (strlen(cmd) == 4 && cmd[1] == 'T') {
     handleTrapdoor(cmd);
   }
   else if (cmd[0] == 'V') {
@@ -237,9 +262,9 @@ void handleTrapdoor(char *cmd){
 
   if(bin >= 0 && bin <= 13){
     if(state == 1){
-      setServo(bins[bin], 90);
+      setServo(currentBin, BIN_OPEN);
     } else {
-      setServo(bins[bin], 0);
+      setServo(currentBin, BIN_CLOSED);
     }
   }
 }
@@ -313,6 +338,9 @@ void handleVChannel(char *cmd){
   }
 
   //set a servo to a desired angle
-  void setServo(Servo& servo, int angle){
-    servo.write(angle);
+  void setServo(int bin, int angle) {
+    bins[bin].write(angle);
+    binStates[bin] = angle;
+    binTimers[bin] = millis();
+    binActive[bin] = true;
   }
