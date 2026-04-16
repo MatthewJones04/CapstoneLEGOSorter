@@ -1,0 +1,6 @@
+IN0 and IN1 for turning the input conveyor on or off
+ID0 and ID1 for turning the identifier conveyor on or off
+LI1 which is to turn the lifting motor on, and make it so it's only turned off by a limit switch (that also needs to be implemented)
+B00-B13 for turning the carousel motor to an angle between 0 and 180 in equal increments (not to be confused with the bin trapdoor numbers)
+1T00-1T13 for opening the bin trapdoor servos (assume angle 90)
+0T00-0T13 for closing the bin trapdoor servos (assume angle 0)
