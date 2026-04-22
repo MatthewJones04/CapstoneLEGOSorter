@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Brick-By-Brick Command Line</title>
+<link rel="stylesheet" href="CSS/stylesheet.css">
+
+</head>
+
+<body>
+
+<h1>Brick-By-Brick command line</h1>
+
+<div class="container">
+
+    <!-- LEFT -->
+    <div class="left-panel">
+        <button class="start" onclick="connectArduino()">Start</button>
+        <button class="stop" onclick="disconnectArduino()">Stop</button>
+        <button class="menu" onclick="openMenu()">Button Menu</button>
+        <button class="help" onclick="openHelp()">Help</button>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center-panel">
+        <input id="messageInput" placeholder="insert message...">
+        <button class="send" onclick="sendMessage()">Send message</button>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+        <h3>Console window</h3>
+        <div id="console" class="console"></div>
+    </div>
+
+</div>
+
+<!-- HELP POPUP -->
+<div id="helpPopup" class="popup">
+    <h3>Help Menu</h3>
+    <ul>
+        <li><b>Start:</b> Connect to Arduino</li>
+        <li><b>Stop:</b> Disconnect from Arduino</li>
+        <li><b>Send Message:</b> Send binary string to Arduino</li>
+        <li><b>Button Menu:</b> Opens control buttons</li>
+    </ul>
+    <button onclick="closeHelp()">Close</button>
+</div>
+
+<!-- BUTTON MENU POPUP -->
+<div id="menuPopup" class="popup">
+    <h3>Arduino Button Menu</h3>
+    <div class="scroll-box">
+        <!-- INPUT CONVEYOR -->
+        <h4>Input Conveyor</h4>
+        <button onclick="menuAction('IN0')">IN0 - Input Conveyor OFF</button><br>
+        <button onclick="menuAction('IN1')">IN1 - Input Conveyor ON</button><br><br>
+        
+        <!-- IDENTIFIER CONVEYOR -->
+        <h4>Identifier Conveyor</h4>
+        <button onclick="menuAction('ID0')">ID0 - Identifier Conveyor OFF</button><br>
+        <button onclick="menuAction('ID1')">ID1 - Identifier Conveyor ON</button><br><br>
+        
+        <!-- LIFTING MOTOR -->
+        <h4>Lifting Motor</h4>
+        <button onclick="menuAction('LI1')">LI1 - Lifting Motor ON (Limit Switch OFF)</button><br><br>
+        
+        <!-- CAROUSEL MOTOR -->
+        <!-- <h4>Carousel Motor (0-180°)</h4>
+        <button onclick="menuAction('B00')">B00 - 0°</button>
+        <button onclick="menuAction('B01')">B01 - 13°</button>
+        <button onclick="menuAction('B02')">B02 - 26°</button>
+        <button onclick="menuAction('B03')">B03 - 39°</button>
+        <button onclick="menuAction('B04')">B04 - 52°</button>
+        <button onclick="menuAction('B05')">B05 - 65°</button>
+        <button onclick="menuAction('B06')">B06 - 78°</button>
+        <button onclick="menuAction('B07')">B07 - 91°</button>
+        <button onclick="menuAction('B08')">B08 - 104°</button>
+        <button onclick="menuAction('B09')">B09 - 117°</button>
+        <button onclick="menuAction('B10')">B10 - 130°</button>
+        <button onclick="menuAction('B11')">B11 - 143°</button>
+        <button onclick="menuAction('B12')">B12 - 156°</button>
+        <button onclick="menuAction('B13')">B13 - 180°</button><br><br> -->
+        
+        <!-- BIN TRAPDOORS - OPEN -->
+        <!-- <h4>Bin Trapdoors - OPEN (90°)</h4>
+        <button onclick="menuAction('1T00')">1T00 - Bin 0 Open</button>
+        <button onclick="menuAction('1T01')">1T01 - Bin 1 Open</button>
+        <button onclick="menuAction('1T02')">1T02 - Bin 2 Open</button>
+        <button onclick="menuAction('1T03')">1T03 - Bin 3 Open</button>
+        <button onclick="menuAction('1T04')">1T04 - Bin 4 Open</button>
+        <button onclick="menuAction('1T05')">1T05 - Bin 5 Open</button>
+        <button onclick="menuAction('1T06')">1T06 - Bin 6 Open</button>
+        <button onclick="menuAction('1T07')">1T07 - Bin 7 Open</button>
+        <button onclick="menuAction('1T08')">1T08 - Bin 8 Open</button>
+        <button onclick="menuAction('1T09')">1T09 - Bin 9 Open</button>
+        <button onclick="menuAction('1T10')">1T10 - Bin 10 Open</button>
+        <button onclick="menuAction('1T11')">1T11 - Bin 11 Open</button>
+        <button onclick="menuAction('1T12')">1T12 - Bin 12 Open</button>
+        <button onclick="menuAction('1T13')">1T13 - Bin 13 Open</button><br><br> -->
+        
+        <!-- BIN TRAPDOORS - CLOSE -->
+        <!-- <h4>Bin Trapdoors - CLOSE (0°)</h4>
+        <button onclick="menuAction('0T00')">0T00 - Bin 0 Close</button>
+        <button onclick="menuAction('0T01')">0T01 - Bin 1 Close</button>
+        <button onclick="menuAction('0T02')">0T02 - Bin 2 Close</button>
+        <button onclick="menuAction('0T03')">0T03 - Bin 3 Close</button>
+        <button onclick="menuAction('0T04')">0T04 - Bin 4 Close</button>
+        <button onclick="menuAction('0T05')">0T05 - Bin 5 Close</button>
+        <button onclick="menuAction('0T06')">0T06 - Bin 6 Close</button>
+        <button onclick="menuAction('0T07')">0T07 - Bin 7 Close</button>
+        <button onclick="menuAction('0T08')">0T08 - Bin 8 Close</button>
+        <button onclick="menuAction('0T09')">0T09 - Bin 9 Close</button>
+        <button onclick="menuAction('0T10')">0T10 - Bin 10 Close</button>
+        <button onclick="menuAction('0T11')">0T11 - Bin 11 Close</button>
+        <button onclick="menuAction('0T12')">0T12 - Bin 12 Close</button>
+        <button onclick="menuAction('0T13')">0T13 - Bin 13 Close</button> -->
+    </div>
+    <br>
+    <button onclick="closeMenu()">Close</button>
+</div>
+
+<script src="JS/script.js"></script>
+
+</body>
+</html>

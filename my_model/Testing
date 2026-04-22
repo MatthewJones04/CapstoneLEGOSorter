@@ -1,0 +1,8 @@
+This is used to activate YOLO on anaconda prompt
+
+activate yolo-env1
+cd C:\Users\{username}\Desktop\my_model 
+python yolo_detect.py --model my_model.pt --source usb0 --resolution 1280x720
+
+
+label-studio start

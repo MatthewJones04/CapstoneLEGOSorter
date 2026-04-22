@@ -1,0 +1,117 @@
+-- BIN 1
+INSERT INTO tray_parts VALUES 
+('63782','Beam 4x6.5 Thin Liftarm','Black',2,1),
+('99773','Beam ','Medium stone gray',4,1),
+('41678','Cross Block 2x2 Split','Black',4,1),
+('65489','Cross Block 3 with Four Pins','Medium Stone Gray',6,1),
+('87082','Long Pin with Center Hole','Medium Stone Gray',4,1),
+('55615','Cross Block Beam Bent 90 Degrees with 4 pins','Medium Stone Gray',4,1),
+('61408','Beam 3x0.5 with Knob and Pin','Black',2,1);
+
+-- BIN 2
+INSERT INTO tray_parts VALUES 
+('59443','Axle Connector','Red',6,2),
+('44809','Cross Block Bent 90 Degrees with three pinholes','Red',2,2),
+('42163','Cross block with two pinholes','Black',4,2),
+('42155','Angle Connector #6 90','Black',2,2),
+('42127','Angle connector #1','Dark Stone Gray',4,2),
+('42134','Angle connector #2','Dark Stone Gray',4,2),
+('42796','Cross Block 1x3','Dark Stone Gray',8,2),
+('40146','Cross Block 90 1x2','Medium Stone Gray',8,2),
+('63869','Technic Block 3x2 Axle/Triple Pin','Medium Stone Gray',6,2),
+('57585','Technic Bush with Three Axles','Medium Stone Gray',2,2),
+('42148','Cross Block 1x3 with two axle holes','Black',8,2);
+
+-- BIN 3
+INSERT INTO tray_parts VALUES 
+('48267','Claw with Axle Hole','White',4,3),
+('45590','Flexible Rubber Axle Connector','Black',4,3),
+('74696','Beam 2 with Axle Hole and Pin hole','Black',4,2),
+('41482','Beam 3','Black',2,3),
+('41482','Beam 3','Blue',4,3),
+('41482','Beam 3','Green',4,3),
+('41482','Beam 3','Red',4,3),
+('41482','Beam 3','Yellow',4,3);
+
+-- BIN 4
+INSERT INTO tray_parts VALUES 
+('32062','Axle with Grooves','Red',10,4),
+('32240','Axle 3','Medium Stone Gray',14,4),
+('3705','Axle 4','Black',4,4),
+('33323','Axle 6','Black',4,4),
+('44294','Axle 7','Medium Stone Gray',4,4),
+('33324','Axle 8','Black',2,4),
+('96048','Axle 9','Medium Stone Gray',2,4),
+('103737','Axle 10','Black',2,4),
+('32241','Axle 12','Black',2,4);
+
+--CONTINUE FIXING AFTER BIN 4
+
+-- BIN 5
+INSERT INTO tray_parts VALUES 
+('65304','Long Pin with Friction and Bushing','Red',22,5),
+('4262','Round Pin Joiner','Medium Stone Gray',4,5),
+('87083','Axle 4 with End Stop','Dark Gray',2,5),
+('55013','Axle 8 with End Stop','Dark Stone Gray',2,5),
+('13670','Axle 3 with Stud','Dark Tan',2,5);
+
+-- BIN 6
+INSERT INTO tray_parts VALUES 
+('41616','Beam 5','Medium Stone Gray',4,6),
+('32524','Beam 7','Medium Stone Gray',4,6),
+('64289','Beam 9','Medium Stone Gray',6,6),
+('64290','Beam 11','Medium Stone Gray',4,6),
+('72714','Beam 13','Medium Stone Gray',6,6),
+('64871','Beam 15','White',6,6);
+
+-- BIN 7
+INSERT INTO tray_parts VALUES 
+('42137','Beam 2x4 Bent 90 Degrees','Red',6,7),
+('44686','Beam 3x3 Bent Double','White',4,7),
+('43886','Beam 3x5 Bent 90 Degrees','Medium Stone Gray',4,7),
+('43886','Beam 3x5 Bent 90 Degrees','White',4,7),
+('42160','Beam 5x5 Bent 90 Degrees','Medium Stone Gray',4,7),
+('42165','Beam Bent T 3 Holes','White',6,7),
+('42149','Beam Bent 5x3 Degrees','Black',4,7),
+('60484','Beam T-Shaped','Black',4,7);
+
+-- BIN 8
+INSERT INTO tray_parts VALUES 
+('99948','Steel Ball / Large Ball Socket','Steel',1,8),
+('64179','Beam Frame 5x7','Medium Stone Gray',3,8),
+('64178','Beam Frame 5x11','Medium Stone Gray',1,8);
+
+-- BIN 9
+INSERT INTO tray_parts VALUES 
+('34432','Gear 40T','Grey',2,9),
+('32498','Bevel Gear 36T','Black',2,9),
+('18575','Bevel Gear 20T','Black',2,9),
+('32270','Bevel Gear 12T','Black',2,9),
+('6589','Bevel Gear Half 12T','Tan',2,9),
+('24505','Gear 24T','Dark Grey',4,9),
+('10928','Gear Type 2 8T','Grey',4,9),
+('94925','Gear Reinforced 16T','Grey',4,9),
+('9135','Gear with 4 Knobs','Black',4,9),
+('4716','Worm Gear','Grey',2,9),
+('99009','Turntable Top/Bottom','Grey',2,9),
+('49750','Wedge Belt Wheel/Tire','Dark Grey',4,9);
+
+-- BIN 10
+INSERT INTO tray_parts VALUES 
+('39888','Technic Long Pin without Friction','Tan',6,10),
+('42924','Long Pin with Friction','Blue',30,10);
+
+-- BIN 11
+INSERT INTO tray_parts VALUES 
+('6562','Pin Axle Connector','Tan',8,11),
+('43093','Connector with Friction','Blue',20,11);
+
+-- BIN 12
+INSERT INTO tray_parts VALUES 
+('61332','Technic Pin with Short Friction Ridges','Black',60,12),
+('3673','Pin without Friction','Medium Stone Gray',10,12);
+
+-- BIN 13
+INSERT INTO tray_parts VALUES 
+('42136','Half Bushing','Yellow',10,13),
+('42798','Bushing','Medium Stone Gray',10,13);
